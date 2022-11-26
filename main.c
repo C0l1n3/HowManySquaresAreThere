@@ -21,8 +21,8 @@ int		checkLine(char *line, int *x, int *y)
 	if (!line || !line[0])
 		return (-1);
 	// Check for empty characters
-	while ((line[i] == ' ' || line[i] == '\f' || line[i] == '\t')
-			|| (line[i] == '\n' || line[i] == '\r' || line[i] == '\v'))
+	while (line[i] == ' ' || line[i] == '\f' || line[i] == '\t'
+			|| line[i] == '\r' || line[i] == '\v')
 		i++;
 	// Check for a  sign
 	if (line[i] == '+' || line[i] == '-')
@@ -38,9 +38,12 @@ int		checkLine(char *line, int *x, int *y)
 	*x = sign * nb;
 	sign = 1;
 	nb = 0;
+	if (line[i] != ' ' && line[i] != '\f' && line[i] != '\t'
+			&& line[i] != '\r' && line[i] != '\v')
+		return (i + 1);
 	// Check for empty characters
-	while ((line[i] == ' ' || line[i] == '\f' || line[i] == '\t')
-			|| (line[i] == '\n' || line[i] == '\r' || line[i] == '\v'))
+	while (line[i] == ' ' || line[i] == '\f' || line[i] == '\t'
+			|| line[i] == '\r' || line[i] == '\v')
 		i++;
 	// Check for a  sign
 	if (line[i] == '+' || line[i] == '-')
@@ -67,12 +70,12 @@ int		checkLine(char *line, int *x, int *y)
 * Prints the squares coordinates to cmd
 *
 * @param {t_pointsList} pointsList = the list of points from the input file
-* @param {int} fd = the file descriptor frome the input file
+* @param {FILE*} fd = the file descriptor frome the input file
 * @returns {int} -1 if an error was found in the file
 */
-int		getPoints(t_pointsList **pointsList, int fd)
+int		getPoints(t_pointsList **pointsList, FILE *fd)
 {
-	int				ret;
+	char			*ret;
 	char			*line;
 	int				lineNumber;
 	int				x;
@@ -90,10 +93,12 @@ int		getPoints(t_pointsList **pointsList, int fd)
 	{
 		// We get each line one by one. if there was an error in the line, we stop and print an error
 		// message.
-		ret = get_next_line(fd, &line);
+		if (!(line = (char*)malloc(sizeof(char) * 20)))
+			return (-1);
+		ret = fgets(line, 20, fd);
 		if ((errorChar = checkLine(line, &x, &y)) > 0)
 		{
-			ft_printf("ERROR FOUND WHILE PARSING FILE\nCHECK LINE %d CHARACTER %d\n", lineNumber, errorChar);
+			printf("ERROR FOUND WHILE PARSING FILE\nCHECK LINE %d CHARACTER %d\n", lineNumber, errorChar);
 			return (-1);
 		}
 		// If there is a duplicate point in the list, we skip it
@@ -104,7 +109,7 @@ int		getPoints(t_pointsList **pointsList, int fd)
 		}
 		if (!ret)
 			break ;
-		wrfree(line);
+		free(line);
 
 	}
 	return (0);
@@ -124,7 +129,7 @@ void	printSquares(t_squares **squaresList)
 	listNumber = 1;
 	while (tmp)
 	{
-		ft_printf("SQUARE %d : A[%d, %d], B[%d, %d], C[%d, %d], D[%d, %d]\n",
+		printf("SQUARE %d : A[%d, %d], B[%d, %d], C[%d, %d], D[%d, %d]\n",
 			listNumber, tmp->A[0], tmp->A[1], tmp->B[0],
 			tmp->B[1], tmp->C[0], tmp->C[1], tmp->D[0],
 			tmp->D[1]);
@@ -137,7 +142,7 @@ int 	main(int argc, char **argv)
 {
 	t_pointsList	*pointsList;
 	t_squares		*squaresList;
-	int				fd;
+	FILE			*fd;
 	int				numberOfSquares;
 	int				errorCode;
 	clock_t			start;
@@ -153,16 +158,16 @@ int 	main(int argc, char **argv)
 	// Check if we have the correct number of arguments
 	if (argc > 3 || argc < 2)
 	{
-		ft_printf("ONLY ONE ARGUMENT\n");
+		printf("ONLY ONE ARGUMENT\n");
 		return (-1);
 	}
 	// Open input file
-	fd = open(argv[1], O_RDONLY);
+	fd = fopen(argv[1], "r");
 
 	// Read file
-	if (read(fd, 0, 0) < 0)
+	if (!fd)
 	{
-		ft_printf("THERE WAS A PROBLEM WHILE TRYING TO OPEN THE FILE\n");
+		printf("THERE WAS A PROBLEM WHILE TRYING TO OPEN THE FILE\n");
 		return (-1);
 	}
 	// Get the points from the input file in a chained list format
@@ -171,13 +176,13 @@ int 	main(int argc, char **argv)
 	// If there are not enough points in the file, we stop
 	if (pointsListSize(pointsList) < 4)
 	{
-		ft_printf("NOT ENOUGH POINTS IN FILE\n");
+		printf("NOT ENOUGH POINTS IN FILE\n");
 		return (-1);
 	}
-	ft_printf("File Ok\n");
+	printf("File Ok\n");
 	// Algorythm to find the squares from the points
 	numberOfSquares = findSquares(pointsList, &squaresList);
-	ft_printf("number of squares found : %d\n", numberOfSquares);
+	printf("number of squares found : %d\n", numberOfSquares);
 	// If any squares are found, we print to the terminal
 	if (numberOfSquares)
 		printSquares(&squaresList);

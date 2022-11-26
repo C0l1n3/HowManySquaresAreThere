@@ -55,8 +55,6 @@ int	findSquares(t_pointsList *pointsList, t_squares **squaresList)
 		// Find the two squares from which AB forms a side
 		projectedPointOne[0] = A->x + rotatedABClockWise[0];
 		projectedPointOne[1] = A->y + rotatedABClockWise[1];
-		if (A->x == 30 && A->y == 30 && B->x == -30 && B->y == 30)
-			printf("First projected pointOne(%f, %f)\n", projectedPointOne[0], projectedPointOne[1]);
 		if ((C = isInList(&B->next, projectedPointOne[0], projectedPointOne[1])))
 		{
 			projectedPointTwo[0] = B->x + rotatedABClockWise[0];
@@ -71,8 +69,6 @@ int	findSquares(t_pointsList *pointsList, t_squares **squaresList)
 		D = NULL;
 		projectedPointOne[0] = A->x - rotatedABClockWise[0];
 		projectedPointOne[1] = A->y - rotatedABClockWise[1];
-		if (A->x == 30 && A->y == 30 && B->x == -30 && B->y == 30)
-			printf("Second projected pointOne(%f, %f)\n", projectedPointOne[0], projectedPointOne[1]);
 		if ((C = isInList(&B->next, projectedPointOne[0], projectedPointOne[1])))
 		{
 			projectedPointTwo[0] = B->x - rotatedABClockWise[0];

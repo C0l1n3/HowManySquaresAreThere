@@ -30,7 +30,7 @@ t_squares	*squaresListNew(t_pointsList *A, t_pointsList *B, t_pointsList *C, t_p
 {
 	t_squares	*newlink;
 
-	if (!(newlink = wrmalloc(sizeof(t_squares))))
+	if (!(newlink = malloc(sizeof(t_squares))))
 		return (NULL);
 	newlink->A[0] = A->x;
 	newlink->A[1] = A->y;

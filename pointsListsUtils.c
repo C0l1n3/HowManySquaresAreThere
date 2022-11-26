@@ -28,7 +28,7 @@ t_pointsList	*pointsListNew(int x, int y)
 {
 	t_pointsList	*newlink;
 
-	if (!(newlink = wrmalloc(sizeof(t_pointsList))))
+	if (!(newlink = malloc(sizeof(t_pointsList))))
 		return (NULL);
 	newlink->x = x;
 	newlink->y = y;
