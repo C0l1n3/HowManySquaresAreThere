@@ -48,4 +48,5 @@ Where _file_ is the input file where your points are located in this format :
 ```
 
 For a file containing 5000 points, the program will roughly take 4 minutes to calculate. 
+For 10 000 points, it takes about 20 minutes.
 
